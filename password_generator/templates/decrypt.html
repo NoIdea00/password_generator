@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Password Decryption</title>
+    <!-- Link to Generate Password page -->
+    <a href="/">Press Here To Navigate To Generate Password</a>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+<body>
+    <h1>Secure Password Decryption</h1>
+    <form action="/decrypt" method="post" enctype="multipart/form-data">
+        <!-- Select Password File Input -->
+        <label for="password_file">Select Password File (Only .txt):</label>
+        <input type="file" name="password_file" id="password_file" accept=".txt" required><br><br>
+
+        <!-- Master Key Input -->
+        <label for="master_key_decrypt">Master Key:</label>
+        <input type="password" name="master_key_decrypt" id="master_key_decrypt" required><br><br>
+
+        <!-- Decrypt Password Button -->
+        <input type="submit" value="Decrypt Password" id="decrypt_button">
+    </form>
+
+    <!-- Display Decrypted Password -->
+    <h2>Decrypted Password:</h2>
+    <div class="password-container">
+        <!-- Add class "password-result" to the decrypted password display -->
+        <p class="password-result">{{ decrypted_password }}</p>
+    </div>
+
+    <!-- JavaScript to disable the Decrypt Password button if the file extension is not .txt -->
+    <script>
+        document.getElementById('password_file').addEventListener('change', function() {
+            var fileInput = this;
+            var decryptButton = document.getElementById('decrypt_button');
+            var allowedFileExtension = '.txt';
+            var invalidFileExtension = false;
+
+            if (fileInput.files.length > 0) {
+                var file = fileInput.files[0];
+                var fileExtension = file.name.split('.').pop().toLowerCase();
+                if (fileExtension !== 'txt') {
+                    invalidFileExtension = true;
+                }
+            }
+
+            if (invalidFileExtension) {
+                decryptButton.disabled = true;
+                alert('Invalid file type. Please upload a .txt file.');
+                fileInput.value = ''; // Clear the file input field
+            } else {
+                decryptButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

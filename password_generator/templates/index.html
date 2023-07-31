@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Password Generator</title>
+    <!-- Link to Decrypt Password page -->
+    <a href="/decrypt">Press Here To Decrypt Password</a>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+            <h1>Secure Password Generator</h1>
+            <form action="/" method="post">
+                <!-- Password Length Input -->
+                <label for="password_length">Password Length:</label>
+                <input type="number" name="password_length" id="password_length" value="12" min="6" max="100" required><br>
+
+                <!-- Character Set Checkboxes -->
+                <fieldset>
+                    <legend>Character Sets:</legend>
+                    <label for="use_uppercase">Include Uppercase Letters (A-Z):</label>
+                    <input type="checkbox" name="use_uppercase" id="use_uppercase" checked><br>
+
+                    <label for="use_lowercase">Include Lowercase Letters (a-z):</label>
+                    <input type="checkbox" name="use_lowercase" id="use_lowercase" checked><br>
+
+                    <label for="use_digits">Include Digits (0-9):</label>
+                    <input type="checkbox" name="use_digits" id="use_digits" checked><br>
+
+                    <label for="use_symbols">Include Symbols (!@#$%^&*()_+-=[]{}|;:,.<>?~):</label>
+                    <input type="checkbox" name="use_symbols" id="use_symbols" checked><br>
+                </fieldset>
+
+                <!-- Save Password Option and Master Key Input -->
+                <label for="save_password">Save Password to File:</label>
+                <input type="checkbox" name="save_password" id="save_password"><br>
+
+                <label for="master_key">Master Key (Required for Saving Password):</label>
+                <input type="password" name="master_key" id="master_key" disabled><br><br>
+
+                <!-- Generate Password Button -->
+                <input type="submit" value="Generate Password">
+            </form>
+        </div>
+
+        <div class="right-section">
+            <!-- Display Generated Password and Strength Score -->
+            <h2>Generated Password:</h2>
+            <div class="password-result-container">
+                <!-- Add class "password-result" to the generated password display -->
+                <p class="password-result">{{ generated_password }}</p>
+                
+            </div>
+            <p>Password Strength Score: {{ password_strength_score }}</p>
+
+                <!-- Display Download Password File Link -->
+                {% if filename %}
+                <a class="download-link" href="{{ url_for('download_password', filename=filename) }}">Download Password File</a>
+                {% endif %}
+                <!-- Password Strength Score Legend -->
+                <div>
+                    <strong>Password Strength Score Legend:</strong><br>
+                    <strong>0:</strong> Very Weak - Password does not meet minimum complexity requirements.<br>
+                    <strong>1:</strong> Weak - Password has minimal complexity but could be improved.<br>
+                    <strong>2:</strong> Moderate - Password is moderately complex but could be stronger.<br>
+                    <strong>3:</strong> Strong - Password is strong and meets complexity requirements.<br>
+                    <strong>4:</strong> Very Strong - Password is very strong and highly secure.<br>
+                </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to enable/disable Master Key Input based on Save Password Option -->
+    <script>
+        document.getElementById('save_password').addEventListener('change', function() {
+            document.getElementById('master_key').disabled = !this.checked;
+        });
+    </script>
+</body>
+</html>
