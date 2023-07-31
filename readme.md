@@ -29,8 +29,8 @@ This web application allows users to generate secure passwords and decrypt previ
 
 1. Clone the repository:
 
-- git clone
-- cd  
+- git clone https://github.com/NoIdea00/password_generator.git
+- cd password_generator 
 
 2. Install the required packages using pip:
 
