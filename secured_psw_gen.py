@@ -5,7 +5,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from flask import Flask, render_template, request, send_file, flash, redirect, url_for
+from flask import Flask, abort, render_template, request, send_file, flash, redirect, url_for
 import os
 
 app = Flask(__name__)
@@ -76,7 +76,7 @@ def decrypt_password(password_file, master_key_decrypt):
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'txt'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS    
 
 @app.route('/', methods=['GET', 'POST'])
 def password_generator():
@@ -156,6 +156,28 @@ def password_decryption():
 
     return render_template('decrypt.html', decrypted_password=decrypted_password,
                            invalid_file_extension=invalid_file_extension, file_extension=file_extension)
+
+@app.route('/generated_password.txt', methods=['GET'])
+def serve_generated_password():
+    # Get the 'file_path' parameter from the URL query string
+    file_path = request.args.get('file_path')
+
+    # Validate the 'file_path' parameter to prevent directory traversal
+    if file_path and not os.path.isabs(file_path) and '../' not in file_path:
+        # Set the directory root for generated_password.txt
+        directory_root = os.path.join(os.getcwd(), "saved")
+
+        # Construct the full file path
+        full_file_path = os.path.join(directory_root, file_path)
+
+        # Check if the file exists and is within the intended directory
+        if os.path.exists(full_file_path) and os.path.commonpath([full_file_path, directory_root]) == directory_root:
+            # Return the file specified by the 'file_path' parameter as plain text (for demo purposes only)
+            return send_file(full_file_path, mimetype='text/plain')
+        else:
+            abort(403)  # Return a 403 Forbidden status for unauthorized access attempts
+    else:
+        abort(400)  # Return a 400 Bad Request status for invalid file paths
 
 
 if __name__ == "__main__":
